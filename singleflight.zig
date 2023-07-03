@@ -1,34 +1,5 @@
 const std = @import("std");
 
-
-pub fn main() !void {
-	var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-	const allocator = gpa.allocator();
-
-	var group = Group(u32).init(allocator);
-	defer group.deinit();
-
-	for (0..7) |i| {
-		const key = try std.fmt.allocPrint(allocator, "key.{d}", .{i});
-		defer allocator.free(key);
-
-		const t1 = try std.Thread.spawn(.{}, getData, .{&group, key});
-		const t2 = try std.Thread.spawn(.{}, getData, .{&group, key});
-		// const t3 = try std.Thread.spawn(.{}, getData, .{&group, key});
-		t1.join(); t2.join(); //	t3.join();
-	}
-}
-
-fn getData(group: *Group(u32), key: []const u8) void {
-	const result = group.load(void, key, &loadData, {}) catch unreachable;
-	std.debug.assert(result.value == 33);
-}
-
-fn loadData(_: []const u8, _: void) !u32 {
-	std.time.sleep(10000);
-	return 33;
-}
-
 const Mutex = std.Thread.Mutex;
 const Allocator = std.mem.Allocator;
 
