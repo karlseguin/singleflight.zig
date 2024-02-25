@@ -130,7 +130,7 @@ fn Job(comptime T: type) type {
 				}
 			}
 
-			// If we're here, we've been signal, the result has to be available
+			// If we're here, we've been signalled, the result has to be available
 			// the job.mutex has automatically been locked by cond.
 			const last = self.notifyNextObserver(group);
 			// when last == true, self is no longer valid!
@@ -157,8 +157,7 @@ fn Job(comptime T: type) type {
 			// We were the last observer. We need to do some cleanup.
 			// it's important that the job mutex is locked while we do this in order
 			// to prevent another thread from slipping in and getting this job,
-			// which we're about to
-
+			// which we're about to destroy
 
 			// to avoid deadlocks, we always have to grap the job mutex after the
 			// group mutex
@@ -167,7 +166,7 @@ fn Job(comptime T: type) type {
 			self.mutex.lock();
 
 			// why aren't we checking self.observers again?  Because if another job
-			// did slip in, it would see the result is available and returning it
+			// did slip in, it would see the result is available and return it
 			// directly, without a need for signal.
 
 			std.debug.assert(group.jobs.remove(self.key));

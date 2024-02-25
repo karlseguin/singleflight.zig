@@ -12,7 +12,7 @@ const result = try group.load(UserLoadState, "user:4", &loadUser, UserLoadState{
 
 
 // result.value is the value returned by loadUser
-// result.first is true when this is the thread that called loadUser
+// result.caller is true when this is the thread that called loadUser
 // result.last is true when all waiting threads for this key have unblocked
 ...
 

@@ -5,7 +5,7 @@ pub fn build(b: *std.Build) !void {
 	const optimize = b.standardOptimizeOption(.{});
 
 	_ = b.addModule("singleflight", .{
-		.source_file = .{ .path = "singleflight.zig" },
+		.root_source_file = .{ .path = "singleflight.zig" },
 	});
 
 	const lib_test = b.addTest(.{
