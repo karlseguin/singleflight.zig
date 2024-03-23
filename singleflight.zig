@@ -249,7 +249,7 @@ test "fuzz deadlocks" {
 
 fn testDeadlocks(group: *Group(u32)) void {
 	var seed: u64 = undefined;
-	std.os.getrandom(std.mem.asBytes(&seed)) catch unreachable;
+	std.posix.getrandom(std.mem.asBytes(&seed)) catch unreachable;
 	var r = std.rand.DefaultPrng.init(seed);
 	var random = r.random();
 	for (0..1000) |_| {
@@ -292,7 +292,7 @@ test "fuzz supression" {
 
 fn testSupression(group: *Group(u32)) void {
 	var seed: u64 = undefined;
-	std.os.getrandom(std.mem.asBytes(&seed)) catch unreachable;
+	std.posix.getrandom(std.mem.asBytes(&seed)) catch unreachable;
 	var r = std.rand.DefaultPrng.init(seed);
 	var random = r.random();
 	for (0..1000) |_| {
