@@ -5,11 +5,11 @@ pub fn build(b: *std.Build) !void {
 	const optimize = b.standardOptimizeOption(.{});
 
 	_ = b.addModule("singleflight", .{
-		.root_source_file = .{ .path = "singleflight.zig" },
+		.root_source_file = b.path("singleflight.zig"),
 	});
 
 	const lib_test = b.addTest(.{
-		.root_source_file = .{ .path = "singleflight.zig" },
+		.root_source_file = b.path("singleflight.zig"),
 		.target = target,
 		.optimize = optimize,
 	});
