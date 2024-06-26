@@ -250,7 +250,7 @@ test "fuzz deadlocks" {
 fn testDeadlocks(group: *Group(u32)) void {
 	var seed: u64 = undefined;
 	std.posix.getrandom(std.mem.asBytes(&seed)) catch unreachable;
-	var r = std.rand.DefaultPrng.init(seed);
+	var r = std.Random.DefaultPrng.init(seed);
 	var random = r.random();
 	for (0..1000) |_| {
 		const value = random.int(u32);
@@ -293,7 +293,7 @@ test "fuzz supression" {
 fn testSupression(group: *Group(u32)) void {
 	var seed: u64 = undefined;
 	std.posix.getrandom(std.mem.asBytes(&seed)) catch unreachable;
-	var r = std.rand.DefaultPrng.init(seed);
+	var r = std.Random.DefaultPrng.init(seed);
 	var random = r.random();
 	for (0..1000) |_| {
 		// 2-10 workers
@@ -378,5 +378,5 @@ fn testConcurrentLoader(state: TestConcurrencyState, _: []const u8) !u32 {
 
 const TestConcurrencyState = struct {
 	id: ?u32,
-	random: *std.rand.Random,
+	random: *std.Random,
 };
