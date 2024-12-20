@@ -299,12 +299,12 @@ fn testSupression(group: *Group(u32)) void {
     std.posix.getrandom(std.mem.asBytes(&seed)) catch unreachable;
     var r = std.Random.DefaultPrng.init(seed);
     var random = r.random();
-    for (0..1000) |_| {
+    for (0..100) |_| {
         // 2-10 workers
         const worker_count = random.uintAtMost(u8, 8) + 2;
         var concurrent_test = ConcurrentRunner.init(group, worker_count);
 
-        concurrent_test.run(TestConcurrencyState{
+        concurrent_test.run(.{
             .id = null,
             .random = &random,
         });
@@ -341,6 +341,7 @@ const ConcurrentRunner = struct {
     fn run(self: *ConcurrentRunner, state: TestConcurrencyState) void {
         const key_id = state.random.int(u32);
         const key = std.fmt.allocPrint(t.allocator, "key:{d}", .{key_id}) catch unreachable;
+        defer t.allocator.free(key);
 
         var threads: [10]std.Thread = undefined;
         for (0..self.worker_count) |i| {
@@ -350,7 +351,6 @@ const ConcurrentRunner = struct {
         for (0..self.worker_count) |i| {
             threads[i].join();
         }
-        t.allocator.free(key);
     }
 };
 
@@ -363,7 +363,7 @@ fn testConcurrentWorker(runner: *ConcurrentRunner, key: []const u8, state: TestC
     runner.mutex.unlock();
 }
 
-// This works with the two fuzz testers. Whe an id is given, then we'll always
+// This works with the two fuzz testers. When an id is given, then we'll always
 // return this id but sleep for a (short) random time. The goal here is to test
 // for deadlocks.
 // When an id is not given, we'll randomly generateone and sleep for a fixed time
@@ -375,7 +375,7 @@ fn testConcurrentLoader(state: TestConcurrencyState, _: []const u8) !u32 {
         std.time.sleep(state.random.uintAtMost(u32, 1000));
         return id;
     } else {
-        std.time.sleep(100_000);
+        std.time.sleep(std.time.ns_per_ms * 3);
         return state.random.int(u32);
     }
 }

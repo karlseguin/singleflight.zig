@@ -1,3 +1,5 @@
+F=
+
 .PHONY: t
 t:
-	zig build test --summary all
+	TEST_FILTER='${F}' zig build test -freference-trace --summary all
